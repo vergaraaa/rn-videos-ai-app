@@ -9,8 +9,8 @@ export default function App() {
 
       <StatusBar style="auto" />
 
-      <Link href="/profile" className="text-blue-600">
-        Go to Profile Page
+      <Link href="/home" className="text-blue-600">
+        Go to Home
       </Link>
     </View>
   );
