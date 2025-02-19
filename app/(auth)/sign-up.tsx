@@ -1,11 +1,19 @@
-import { View, Text, ScrollView, Image, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { images } from "../../constants";
 import FormField from "@/components/FormField";
 import { useState } from "react";
 import CustomButton from "@/components/CustomButton";
-import { Link, router } from "expo-router";
+import { router } from "expo-router";
+import { createUser } from "@/lib/appwrite";
 
 const SignUp = () => {
   const [form, setForm] = useState({
@@ -15,7 +23,27 @@ const SignUp = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const submit = () => {};
+  const submit = async () => {
+    if (!form.username || !form.email || !form.password) {
+      return Alert.alert("Error", "Please fill all the fields.");
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const result = await createUser(form.email, form.password, form.username);
+
+      router.replace("/home");
+    } catch (error) {
+      if (error instanceof Error) {
+        return Alert.alert("Error", error.message);
+      }
+
+      return Alert.alert("Unknown error");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <SafeAreaView className="bg-primary h-full">
@@ -35,6 +63,7 @@ const SignUp = () => {
             title="Username"
             className="mt-7"
             value={form.username}
+            autoCapitalize="none"
             handleChangeText={(username: string) => {
               setForm({
                 ...form,
@@ -48,6 +77,7 @@ const SignUp = () => {
             className="mt-7"
             value={form.email}
             keyboardType="email-address"
+            autoCapitalize="none"
             handleChangeText={(email: string) => {
               setForm({
                 ...form,
@@ -60,6 +90,7 @@ const SignUp = () => {
             title="Password"
             className="mt-7"
             value={form.password}
+            autoCapitalize="none"
             handleChangeText={(password: string) => {
               setForm({
                 ...form,

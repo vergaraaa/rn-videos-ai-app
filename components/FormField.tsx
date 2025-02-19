@@ -6,6 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
+  TextInputProps,
 } from "react-native";
 
 import { icons } from "../constants";
@@ -16,6 +17,7 @@ interface Props {
   placeholder?: string;
   handleChangeText: (text: string) => void;
   className?: string;
+  autoCapitalize?: "none" | "sentences" | "words" | "characters" | undefined;
   keyboardType?: KeyboardType;
 }
 
@@ -25,6 +27,7 @@ const FormField = ({
   placeholder,
   handleChangeText,
   className = "",
+  autoCapitalize,
   keyboardType = "default",
 }: Props) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -41,6 +44,7 @@ const FormField = ({
           placeholderTextColor="#7b7b8b"
           onChangeText={handleChangeText}
           keyboardType={keyboardType}
+          autoCapitalize={autoCapitalize}
           secureTextEntry={title === "Password" && !showPassword}
         />
 

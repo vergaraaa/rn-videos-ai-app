@@ -1,11 +1,12 @@
-import { View, Text, ScrollView, Image } from "react-native";
+import { View, Text, ScrollView, Image, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { images } from "../../constants";
 import FormField from "@/components/FormField";
 import { useState } from "react";
 import CustomButton from "@/components/CustomButton";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
+import { signIn } from "@/lib/appwrite";
 
 const SignIn = () => {
   const [form, setForm] = useState({
@@ -14,7 +15,27 @@ const SignIn = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const submit = () => {};
+  const submit = async () => {
+    if (!form.email || !form.password) {
+      return Alert.alert("Error", "Please fill all the fields.");
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const result = await signIn(form.email, form.password);
+
+      router.replace("/home");
+    } catch (error) {
+      if (error instanceof Error) {
+        return Alert.alert("Error", error.message);
+      }
+
+      return Alert.alert("Unknown error");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <SafeAreaView className="bg-primary h-full">
@@ -35,6 +56,7 @@ const SignIn = () => {
             className="mt-7"
             value={form.email}
             keyboardType="email-address"
+            autoCapitalize="none"
             handleChangeText={(email: string) => {
               setForm({
                 ...form,
@@ -47,6 +69,7 @@ const SignIn = () => {
             title="Password"
             className="mt-7"
             value={form.password}
+            autoCapitalize="none"
             handleChangeText={(password: string) => {
               setForm({
                 ...form,
