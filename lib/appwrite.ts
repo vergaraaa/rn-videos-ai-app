@@ -1,4 +1,11 @@
-import { Account, Avatars, Client, Databases, ID } from "react-native-appwrite";
+import {
+  Account,
+  Avatars,
+  Client,
+  Databases,
+  ID,
+  Query,
+} from "react-native-appwrite";
 
 const client = new Client();
 
@@ -67,6 +74,30 @@ export const signIn = async (email: string, password: string) => {
     const session = await account.createEmailPasswordSession(email, password);
 
     return session;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+
+    throw new Error("Unkown error");
+  }
+};
+
+export const getCurrentUser = async () => {
+  try {
+    const currentAccount = await account.get();
+
+    if (!currentAccount) throw Error("No auth");
+
+    const currentUser = await databases.listDocuments(
+      config.databaseId,
+      config.usersCollectionId,
+      [Query.equal("accountId", currentAccount.$id)]
+    );
+
+    if (!currentUser) throw Error("No user exists");
+
+    return currentUser.documents[0];
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(error.message);
