@@ -1,4 +1,5 @@
 import { getCurrentUser } from "@/lib/appwrite";
+import { User } from "@/types/user";
 import {
   createContext,
   ReactNode,
@@ -13,15 +14,15 @@ type GlobalContext = {
   setIsLoggedIn: (isLoggedIn: boolean) => void;
   isLoading: boolean;
   setIsLoading: (isLoading: boolean) => void;
-  user: Models.Document | null;
-  setUser: (user: Models.Document | null) => void;
+  user: User | null;
+  setUser: (user: User | null) => void;
 };
 
 const GlobalContext = createContext<GlobalContext | undefined>(undefined);
 
 export const GlobalProvider = ({ children }: { children: ReactNode }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState<Models.Document | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

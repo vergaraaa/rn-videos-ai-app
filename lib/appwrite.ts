@@ -1,3 +1,5 @@
+import { User } from "@/types/user";
+import { Video } from "@/types/video";
 import {
   Account,
   Avatars,
@@ -18,6 +20,16 @@ export const config = {
   videosCollectionId: "67b4452b002286cb8518",
   storageId: "67b4461f001323bbe1c6",
 };
+
+const {
+  endpoint,
+  platform,
+  projectId,
+  databaseId,
+  usersCollectionId,
+  videosCollectionId,
+  storageId,
+} = config;
 
 client
   .setEndpoint(config.endpoint)
@@ -97,7 +109,39 @@ export const getCurrentUser = async () => {
 
     if (!currentUser) throw Error("No user exists");
 
-    return currentUser.documents[0];
+    return currentUser.documents[0] as User;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+
+    throw new Error("Unkown error");
+  }
+};
+
+export const getAllPosts = async () => {
+  try {
+    const posts = await databases.listDocuments(databaseId, videosCollectionId);
+
+    return posts.documents as Video[];
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+
+    throw new Error("Unkown error");
+  }
+};
+
+export const getLatestPosts = async () => {
+  try {
+    const posts = await databases.listDocuments(
+      databaseId,
+      videosCollectionId,
+      [Query.orderDesc("$createdAt"), Query.limit(7)]
+    );
+
+    return posts.documents as Video[];
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(error.message);
