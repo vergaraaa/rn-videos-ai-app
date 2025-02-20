@@ -71,7 +71,7 @@ export const createUser = async (
       }
     );
 
-    return newUser;
+    return newUser as User;
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(error.message);
@@ -160,6 +160,40 @@ export const searchPosts = async (query: string) => {
     );
 
     return posts.documents as Video[];
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+
+    throw new Error("Unkown error");
+  }
+};
+
+export const getUserPosts = async (userId: string) => {
+  try {
+    if (!userId) return;
+
+    const posts = await databases.listDocuments(
+      databaseId,
+      videosCollectionId,
+      [Query.equal("creator", userId)]
+    );
+
+    return posts.documents as Video[];
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+
+    throw new Error("Unkown error");
+  }
+};
+
+export const signOut = async () => {
+  try {
+    const session = await account.deleteSession("current");
+
+    return session;
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(error.message);
