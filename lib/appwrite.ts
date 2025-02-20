@@ -150,3 +150,21 @@ export const getLatestPosts = async () => {
     throw new Error("Unkown error");
   }
 };
+
+export const searchPosts = async (query: string) => {
+  try {
+    const posts = await databases.listDocuments(
+      databaseId,
+      videosCollectionId,
+      [Query.search("title", query)]
+    );
+
+    return posts.documents as Video[];
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+
+    throw new Error("Unkown error");
+  }
+};

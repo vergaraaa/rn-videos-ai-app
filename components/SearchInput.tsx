@@ -7,40 +7,46 @@ import {
   TouchableOpacity,
   Image,
   TextInputProps,
+  Alert,
 } from "react-native";
 
 import { icons } from "../constants";
+import { router, usePathname } from "expo-router";
 
 interface Props {
-  value: string;
-  placeholder?: string;
-  handleChangeText: (text: string) => void;
-  autoCapitalize?: "none" | "sentences" | "words" | "characters" | undefined;
-  keyboardType?: KeyboardType;
+  initialQuery?: string;
 }
 
-const SearchInput = ({
-  value,
-  placeholder,
-  handleChangeText,
-  autoCapitalize,
-  keyboardType = "default",
-}: Props) => {
-  const [showPassword, setShowPassword] = useState(false);
+const SearchInput = ({ initialQuery }: Props) => {
+  const pathname = usePathname();
+  const [query, setQuery] = useState(initialQuery || "");
 
   return (
     <View className="w-full h-16 px-4 bg-black-100 rounded-2xl border-2 border-black-200 focus:border-secondary flex flex-row items-center space-x-4">
       <TextInput
         className="text-base mt-0.5 text-white flex-1 font-pregular"
-        value={value}
-        placeholder={placeholder}
-        placeholderTextColor="#7b7b8b"
-        onChangeText={handleChangeText}
-        keyboardType={keyboardType}
-        autoCapitalize={autoCapitalize}
+        value={query}
+        placeholder="Search for a video topic"
+        placeholderTextColor="#CDCDE0"
+        onChangeText={(e) => setQuery(e)}
+        autoCapitalize="none"
       />
 
-      <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+      <TouchableOpacity
+        onPress={() => {
+          if (!query)
+            return Alert.alert(
+              "Missing query",
+              "Please input something to search results across database"
+            );
+
+          if (pathname.startsWith("/search")) {
+            router.setParams({ query });
+          } else {
+            router.push(`/search/${query}`);
+          }
+        }}
+      >
         <Image source={icons.search} className="size-5" resizeMode="contain" />
       </TouchableOpacity>
     </View>

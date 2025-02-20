@@ -13,7 +13,7 @@ export const useAppwrite = (fn: Function) => {
       setData(response);
     } catch (error) {
       if (error instanceof Error) {
-        Alert.alert(error.message);
+        return Alert.alert(error.message);
       }
 
       Alert.alert("Unkown error");
